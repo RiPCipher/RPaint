@@ -9,3 +9,11 @@ add_library(render
     ${CMAKE_SOURCE_DIR}/src/core/io/iimage.h)
 target_include_directories(render PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(render PUBLIC glad _debug core)
+
+## Paint Service
+add_library(paint
+    paint/paint_target.cpp
+
+    paint/paint_target.h)
+target_include_directories(paint PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(paint PUBLIC glad render)

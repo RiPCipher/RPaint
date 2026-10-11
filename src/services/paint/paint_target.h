@@ -13,7 +13,7 @@ public:
 	PaintTarget(const PaintTarget&) = delete;
 	PaintTarget& operator=(const PaintTarget&) = delete;
 
-	void clear(float r, float, g, float, b, float a);
+	void clear(float r, float g, float b, float a);
 
 	int size() const { return m_size; }
 

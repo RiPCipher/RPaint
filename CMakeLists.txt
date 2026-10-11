@@ -64,7 +64,7 @@ add_subdirectory(src/core)
 add_subdirectory(src/services)
 
 target_compile_definitions(rpaint PRIVATE GLFW_INCLUDE_NONE)
-target_link_libraries(rpaint PRIVATE glfw glad stb assimp_loader _debug core render)
+target_link_libraries(rpaint PRIVATE glfw glad stb assimp_loader _debug core render paint)
 
 ## Copy ShadersDirectory
 add_custom_command(

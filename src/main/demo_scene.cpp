@@ -40,12 +40,17 @@ DemoScene::DemoScene(const DefaultTextures& defaults)
 	, m_roughNormal(loadImage("assets/textures/roughness_test_1_normal.png"))
 	, m_roughORM   (loadImage("assets/textures/roughness_test_1_orm.png"))
 
+	, m_paint(2048, true)
+
 	, m_redPlastic(&m_pbr, defaults)
 	, m_gold      (&m_pbr, defaults)
-	, m_textured  (&m_pbr, defaults, &m_testAlbedo,  &m_testNormal,  &m_testORM)
+	, m_textured  (&m_pbr, defaults, &m_paint.texture, &m_testNormal, &m_testORM)
 	, m_roughTest (&m_pbr, defaults, &m_roughAlbedo, &m_roughNormal, &m_roughORM)
 	, m_ground    (&m_pbr, defaults)
 {
+	// Magenta first to prove the paint texture is really bound (the default albedo is already white)
+	m_paint.clear(1.0f, 0.0f, 1.0f, 1.0f);
+
 	// Factor-only materials: no textures, so the 1x1 defaults pass through and the factors decide
 	m_redPlastic.setBaseColorSRGB(0.85f, 0.10f, 0.18f);
 	m_redPlastic.metallicFactor  = 0.0f;

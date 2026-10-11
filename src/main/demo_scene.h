@@ -8,6 +8,7 @@
 #include "services/render/material.h"
 #include "services/render/light.h"
 #include "services/render/shadow.h"
+#include "services/paint/paint_target.h"
 #include "services/render/render.h"
 
 struct Camera;
@@ -36,6 +37,8 @@ private:
 
 	Texture m_testAlbedo, m_testNormal, m_testORM;
 	Texture m_roughAlbedo, m_roughNormal, m_roughORM;
+
+	PaintTarget m_paint; // must be declared before the materials that point at its texture
 
 	Material m_redPlastic;
 	Material m_gold;
