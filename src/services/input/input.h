@@ -11,10 +11,9 @@ enum class Action {
 
 	KeyEsc, KeySpace, KeyLShift, KeyLAlt,
 
-	//Mouse Input
 	MouseLeft, MouseRight, MouseMiddle,
-
 };
+
 
 class Input {
 public:
@@ -23,18 +22,15 @@ public:
 
 	void update(GLFWwindow* window) {
 		previous = current;
-		for (auto& [action, key] : bindings) current[action] = (glfwGetKey(window, key) == GLFW_PRESS);
+		for (auto& [action, code] : bindings) {
+			current[action] = (code <= GLFW_MOUSE_BUTTON_LAST)
+				? glfwGetMouseButton(window, code) == GLFW_PRESS
+				: glfwGetKey(window, code)         == GLFW_PRESS;
+		}
 	}
 
 	bool isDown(Action a) const { return get(current, a); }
 	bool wasPressed(Action a) const { return get(current, a) && !get(previous, a); }
-
-
-
-	// Mouse Input
-	//void readPixel(int mX,  int mY, int height, int pixels) {
-	//	glReadPixels(mX, height - mY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &pixels);
-	//}
 
 private:
 	std::unordered_map<Action, int> bindings;

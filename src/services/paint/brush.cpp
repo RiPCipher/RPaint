@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 
 #include "services/paint/brush.h"
-#include "services/paint/paint_target.h"
+#include "services/paint/paint.h"
 #include "services/render/mesh_primitives.h"
 
 Brush::Brush()

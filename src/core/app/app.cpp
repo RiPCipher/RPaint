@@ -37,7 +37,7 @@ bool App::initialize() {
 
 	registerDefaultBinds(m_input);
 
-	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); //GLFW_CURSOR_DISABLED
 	glfwSetWindowUserPointer(m_window, this);
 	glfwSetCursorPosCallback(m_window, onMouseMove);
 	glfwSetFramebufferSizeCallback(m_window, onFramebufferResize);
@@ -93,6 +93,20 @@ void App::onUpdate(float dt) {
 	if (width == 0 || height == 0) return;
 
 	m_scene->update(dt);
+
+	if (m_input.isDown(Action::MouseLeft)) {
+		double cursorX = 0.0, cursorY = 0.0;
+		int windowW = 0, windowH = 0;
+		glfwGetCursorPos(m_window, &cursorX, &cursorY);
+		glfwGetWindowSize(m_window, &windowW, &windowH);
+
+		if (windowW > 0 && windowH > 0) {
+			int x = (int)(cursorX * width / windowW);
+			int y = (int)(cursorY * height / windowH);
+			m_scene->paint(m_camera, x, y, width, height);
+		}
+	}
+
 	m_scene->render(m_camera, width, height);
 }
 
@@ -121,6 +135,8 @@ void App::onMouseMove(GLFWwindow* window, double xPos, double yPos) {
 	float yOffset = lastY - (float)yPos;
 	lastX = (float)xPos;
 	lastY = (float)yPos;
+
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) != GLFW_PRESS) return;
 
 	App* app = (App*)glfwGetWindowUserPointer(window);
 	app->m_camera.processMouse(xOffset, yOffset);

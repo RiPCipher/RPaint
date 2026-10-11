@@ -3,8 +3,8 @@
 // ------------- Vertex ---------------
 #ifdef VERTEX_SHADER
 
-layout (location = 0) in vec3 vertPos;   // quad corners, -0.5..0.5
-layout (location = 1) in vec2 vertUV;    // 0..1 across the quad
+layout (location = 0) in vec3 vertPos;
+layout (location = 1) in vec2 vertUV;
 
 uniform vec2  center;
 uniform float radius;
