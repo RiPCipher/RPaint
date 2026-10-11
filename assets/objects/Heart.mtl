@@ -1,0 +1,13 @@
+# Blender 5.1.2 MTL File: 'RiPEngine_Heart.blend'
+# www.blender.org
+
+newmtl Material.001
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/Users/C1PH3/Desktop/Dev/RiPEngine/v1/assets/textures/test_texture_1_albedo.png
+map_Bump -bm 1.000000 C:/Users/C1PH3/Desktop/Dev/RiPEngine/v1/assets/textures/test_texture_1_normal.png
