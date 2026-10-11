@@ -17,9 +17,9 @@ Texture::Texture(int width, int height, bool srgb) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	GLint internalFormat = srgb ? GL_SRGB8_ALPHA8 : GL_RGBA;
+	GLint internalFormat = srgb ? GL_SRGB8_ALPHA8 : GL_RGBA8;
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA8, GL_UNSIGNED_BYTE, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 }
 
 Texture::Texture(const ImageData& image, bool srgb) {
