@@ -15,7 +15,7 @@ public:
 
 	void clear(float r, float g, float b, float a);
 
-	int size() const { return m_size; }
+	int size() const { return m_size; };
 
 private:
 	int m_size;

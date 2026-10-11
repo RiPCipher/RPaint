@@ -9,8 +9,10 @@ enum class Action {
 	KeyA, KeyB, KeyC, KeyD, KeyE, KeyF, KeyG, KeyH, KeyI, KeyJ, KeyK, KeyL, KeyM,KeyN, KeyO, KeyP, KeyQ, KeyR, KeyS, KeyT, KeyU, KeyV, KeyW, KeyX, KeyY, KeyZ,
 	Key0, Key1, Key2, Key3, Key4, Key5, Key6, Key7, Key8, Key9,
 
-	KeyEsc,
+	KeyEsc, KeySpace, KeyLShift, KeyLAlt,
 
+	//Mouse Input
+	MouseLeft, MouseRight, MouseMiddle,
 
 };
 
@@ -26,6 +28,13 @@ public:
 
 	bool isDown(Action a) const { return get(current, a); }
 	bool wasPressed(Action a) const { return get(current, a) && !get(previous, a); }
+
+
+
+	// Mouse Input
+	//void readPixel(int mX,  int mY, int height, int pixels) {
+	//	glReadPixels(mX, height - mY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &pixels);
+	//}
 
 private:
 	std::unordered_map<Action, int> bindings;

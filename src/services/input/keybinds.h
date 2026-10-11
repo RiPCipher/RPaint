@@ -47,4 +47,9 @@ inline void registerDefaultBinds(Input& input) {
 	input.bind(Action::Key9, GLFW_KEY_9);
 
 	input.bind(Action::KeyEsc, GLFW_KEY_ESCAPE);
+	input.bind(Action::KeySpace, GLFW_KEY_SPACE);
+
+	input.bind(Action::MouseLeft, GLFW_MOUSE_BUTTON_LEFT);
+	input.bind(Action::MouseRight, GLFW_MOUSE_BUTTON_RIGHT);
+	input.bind(Action::MouseMiddle, GLFW_MOUSE_BUTTON_MIDDLE);
 }

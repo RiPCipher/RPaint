@@ -63,7 +63,7 @@ void App::run() {
 		m_camera.processKeyboard(m_input, dt);
 		if (m_input.wasPressed(Action::KeyEsc)) glfwSetWindowShouldClose(m_window, true);
 
-		glClearColor(0.55f, 0.65f, 0.78f, 1.0f); // sky, roughly matches the shader's ambient skyColor
+		glClearColor(0.55f, 0.65f, 0.78f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		onUpdate(dt);
@@ -90,14 +90,14 @@ void App::onStart() {
 void App::onUpdate(float dt) {
 	int width = 0, height = 0;
 	glfwGetFramebufferSize(m_window, &width, &height);
-	if (width == 0 || height == 0) return; // minimized
+	if (width == 0 || height == 0) return;
 
 	m_scene->update(dt);
 	m_scene->render(m_camera, width, height);
 }
 
 void App::onShutdown() {
-	m_scene.reset(); // before m_defaults and the GL context go away
+	m_scene.reset();
 }
 
 void App::onFramebufferResize(GLFWwindow* window, int width, int height) {

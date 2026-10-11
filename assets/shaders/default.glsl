@@ -1,6 +1,4 @@
-// Default Shader
 // NOTE: no #version here on purpose. The loader prepends "#version 330 core"
-// and the stage #define (VERTEX_SHADER / FRAGMENT_SHADER) ahead of this file
 
 // ------------- Vertex ---------------
 
