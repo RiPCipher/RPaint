@@ -31,6 +31,7 @@ uniform float hardness;
 out vec4 FragColor;
 
 void main() {
+	if (hardness > 0.999) hardness = 0.999;
 	float d = length(localUV - 0.5) * 2.0;
 	float a = 1.0 - smoothstep(hardness, 1.0, d);
 	FragColor = vec4(color.rgb, color.a * a);

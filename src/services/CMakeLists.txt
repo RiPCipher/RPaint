@@ -14,6 +14,6 @@ target_link_libraries(render PUBLIC glad _debug core)
 add_library(paint
     paint/paint.cpp paint/brush.cpp
 
-    paint/paint.h paint/brush.h)
+    paint/paint.h paint/brush.h paint/paintState.h)
 target_include_directories(paint PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(paint PUBLIC glad render)

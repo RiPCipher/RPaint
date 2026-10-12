@@ -11,22 +11,30 @@ Brush::Brush()
 }
 
 void Brush::stamp(PaintTarget& target, Vector2<float> uv) {
+	stampAll(target, std::vector<Vector2<float>>{ uv });
+}
+
+void Brush::stampAll(PaintTarget& target, const std::vector<Vector2<float>>& uvs) {
+	if (uvs.empty()) return;
+
 	glBindFramebuffer(GL_FRAMEBUFFER, target.FBO);
 	glViewport(0, 0, target.size(), target.size());
 
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //glBlendFuncSeparate
 
 	m_shader.use();
-	m_shader.setVec2("center", uv.x, uv.y);
 	m_shader.setFloat("radius", radius);
 	m_shader.setFloat("hardness", hardness);
 	m_shader.setVec4("color", color.x, color.y, color.z, color.w);
 
 	glBindVertexArray(m_quad.VAO);
-	glDrawElements(GL_TRIANGLES, m_quad.indexCount, GL_UNSIGNED_INT, 0);
+	for (const Vector2<float>& uv : uvs) {
+		m_shader.setVec2("center", uv.x, uv.y);
+		glDrawElements(GL_TRIANGLES, m_quad.indexCount, GL_UNSIGNED_INT, 0);
+	}
 
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);

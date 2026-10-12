@@ -105,6 +105,8 @@ void App::onUpdate(float dt) {
 			int y = (int)(cursorY * height / windowH);
 			m_scene->paint(m_camera, x, y, width, height);
 		}
+	} else {
+		m_scene->endPaint();
 	}
 
 	m_scene->render(m_camera, width, height);

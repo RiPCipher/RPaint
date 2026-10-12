@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "core/math/vector.h"
 #include "services/render/shader.h"
 #include "services/render/mesh.h"
@@ -18,6 +20,7 @@ public:
 	Brush& operator=(const Brush&) = delete;
 
 	void stamp(PaintTarget& target, Vector2<float> uv);
+	void stampAll(PaintTarget& target, const std::vector<Vector2<float>>& uvs);
 
 private:
 	Shader m_shader;
