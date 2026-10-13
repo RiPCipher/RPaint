@@ -1,6 +1,9 @@
 #pragma once
 
 #include "services/render/texture.h"
+#include "services/render/shader.h"
+
+class Mesh;
 
 class PaintTarget {
 public:
@@ -44,4 +47,23 @@ private:
 
 	int m_width;
 	int m_height;
+};
+
+class SeamPadding {
+public:
+	int maxDistance = 8;
+
+	SeamPadding();
+	~SeamPadding();
+
+	SeamPadding(const SeamPadding&) = delete;
+	SeamPadding& operator=(const SeamPadding&) = delete;
+
+	void buildMask(PaintTarget& mask, const Mesh& mesh);
+	void apply(const PaintTarget& canvas, const PaintTarget& mask, PaintTarget& display);
+
+private:
+	Shader m_maskShader;
+	Shader m_dilateShader;
+	unsigned int m_emptyVAO = 0;
 };

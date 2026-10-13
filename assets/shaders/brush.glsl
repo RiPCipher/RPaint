@@ -6,15 +6,11 @@
 layout (location = 0) in vec3 vertPos;
 layout (location = 1) in vec2 vertUV;
 
-uniform vec2  center;
-uniform float radius;
-
-out vec2 localUV;
-
+uniform mat4 Model;
+out vec3 worldPos;
 void main() {
-	vec2 uv = center + vertPos.xy * 2.0 * radius;
-	gl_Position = vec4(uv * 2.0 - 1.0, 0.0, 1.0);
-	localUV = vertUV;
+    worldPos    = (Model * vec4(vertPos, 1.0)).xyz;
+    gl_Position = vec4(vertUV * 2.0 - 1.0, 0.0, 1.0);
 }
 
 #endif
@@ -23,17 +19,19 @@ void main() {
 
 #ifdef FRAGMENT_SHADER
 
-in vec2 localUV;
+in vec3 worldPos;
 
-uniform vec4  color;
+uniform vec3  center;
+uniform float radius;
 uniform float hardness;
+uniform vec4  color;
 
 out vec4 FragColor;
 
 void main() {
-	//TODO: Clamp hardness to 0.999 if >1
-	float d = length(localUV - 0.5) * 2.0;
-	float a = 1.0 - smoothstep(hardness, 1.0, d);
+	float h = min(hardness, 0.999);
+	float d = distance(worldPos, center) / radius;
+	float a = 1.0 - smoothstep(h, 1.0, d);
 	FragColor = vec4(color.rgb, color.a * a);
 }
 

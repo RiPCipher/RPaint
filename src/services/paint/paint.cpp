@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <iostream>
 #include "paint.h"
+#include "services/render/mesh.h"
 
 PaintTarget::PaintTarget(int size, bool srgb) : texture(size, size, srgb), m_size(size) {
 	glGenFramebuffers(1, &FBO);
@@ -76,7 +77,65 @@ void PickBuffer::clear() {
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	glViewport(0, 0, m_width, m_height);
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, -1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+SeamPadding::SeamPadding()
+	: m_maskShader("assets/shaders/uv_mask.glsl")
+	, m_dilateShader("assets/shaders/dilate.glsl")
+{
+	glGenVertexArrays(1, &m_emptyVAO);
+}
+
+SeamPadding::~SeamPadding() {
+	glDeleteVertexArrays(1, &m_emptyVAO);
+}
+
+void SeamPadding::buildMask(PaintTarget& mask, const Mesh& mesh) {
+	mask.clear(0.0f, 0.0f, 0.0f, 0.0f);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, mask.FBO);
+	glViewport(0, 0, mask.size(), mask.size());
+
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+
+	m_maskShader.use();
+	glBindVertexArray(mesh.VAO);
+	glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void SeamPadding::apply(const PaintTarget& canvas, const PaintTarget& mask, PaintTarget& display) {
+	glBindFramebuffer(GL_FRAMEBUFFER, display.FBO);
+	glViewport(0, 0, display.size(), display.size());
+
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glEnable(GL_FRAMEBUFFER_SRGB);
+
+	m_dilateShader.use();
+	m_dilateShader.setInt("canvas", 0);
+	m_dilateShader.setInt("mask", 1);
+	m_dilateShader.setInt("maxDistance", maxDistance);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, canvas.texture.TID);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, mask.texture.TID);
+
+	glBindVertexArray(m_emptyVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	glDisable(GL_FRAMEBUFFER_SRGB);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

@@ -16,7 +16,7 @@ struct Transform {
 
 	}
 
-	Matrix::Matrix4 modelMatrix() {
+	Matrix::Matrix4 modelMatrix() const {
 		Matrix::Matrix4 T = Matrix::translation(position);
 
 		Matrix::Matrix4 Rx = Matrix::rotationX(rotation.x);

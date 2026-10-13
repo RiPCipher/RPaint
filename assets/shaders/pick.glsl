@@ -4,9 +4,8 @@
 #ifdef VERTEX_SHADER
 
 layout (location = 0) in vec3 vertPos;
-layout (location = 1) in vec2 aTexPos;
 
-out vec2 texPos;
+out vec3 worldPos;
 
 uniform mat4 Model;
 uniform mat4 View;
@@ -17,7 +16,7 @@ void main() {
 	vec4 world = Model * vec4(vertPos, 1.0);
 	gl_Position = Projection * View * world;
 
-	texPos   = aTexPos;
+	worldPos = world.xyz; 
 
 }
 
@@ -27,11 +26,11 @@ void main() {
 
 #ifdef FRAGMENT_SHADER
 
-in vec2 texPos;
+in vec3 worldPos;
 
 uniform float objectId;
 out vec4 PickOut;
 
-void main() { PickOut = vec4(texPos, objectId, 1.0); }
+void main() { PickOut = vec4(worldPos, objectId); }
 
 #endif

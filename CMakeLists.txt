@@ -66,11 +66,11 @@ add_subdirectory(src/services)
 target_compile_definitions(rpaint PRIVATE GLFW_INCLUDE_NONE)
 target_link_libraries(rpaint PRIVATE glfw glad stb assimp_loader _debug core render paint)
 
-## Copy ShadersDirectory
-add_custom_command(
-    TARGET rpaint POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
+## Copy Assets Directory
+add_custom_target(copy_assets ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
         ${CMAKE_SOURCE_DIR}/assets
         $<TARGET_FILE_DIR:rpaint>/assets/
-    COMMENT "Copying shaders directory to output"
+    COMMENT "Copying assets directory to output"
 )
+add_dependencies(rpaint copy_assets)

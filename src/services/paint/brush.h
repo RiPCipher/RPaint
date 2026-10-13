@@ -4,13 +4,13 @@
 
 #include "core/math/vector.h"
 #include "services/render/shader.h"
-#include "services/render/mesh.h"
 
 class PaintTarget;
+struct RenderObject;
 
 class Brush {
 public:
-	float radius = 0.05f;
+	float radius = 0.1f;
 	float hardness = 0.5f;
 	Vector4<float> color{ 1.0f, 0.0f, 0.0f, 1.0f };
 
@@ -19,10 +19,8 @@ public:
 	Brush(const Brush&) = delete;
 	Brush& operator=(const Brush&) = delete;
 
-	void stamp(PaintTarget& target, Vector2<float> uv);
-	void stampAll(PaintTarget& target, const std::vector<Vector2<float>>& uvs);
+	void stampAll(PaintTarget& target, const RenderObject& obj, const std::vector<Vector3<float>>& centers);
 
 private:
 	Shader m_shader;
-	Mesh   m_quad;
 };
