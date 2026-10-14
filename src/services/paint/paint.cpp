@@ -33,13 +33,18 @@ void PaintTarget::clear(float r, float g, float b, float a) {
 PickBuffer::PickBuffer(int width, int height) : m_width(width), m_height(height) {
 	glGenFramebuffers(1, &FBO);
 	glGenRenderbuffers(1, &colorRBO);
+	glGenRenderbuffers(1, &normalRBO);
 	glGenRenderbuffers(1, &depthRBO);
 
 	allocate();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRBO);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER, normalRBO);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRBO);
+
+	const GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, drawBuffers);
 
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (status != GL_FRAMEBUFFER_COMPLETE) {
@@ -52,11 +57,15 @@ PickBuffer::PickBuffer(int width, int height) : m_width(width), m_height(height)
 PickBuffer::~PickBuffer() {
 	glDeleteFramebuffers(1, &FBO);
 	glDeleteRenderbuffers(1, &colorRBO);
+	glDeleteRenderbuffers(1, &normalRBO);
 	glDeleteRenderbuffers(1, &depthRBO);
 }
 
 void PickBuffer::allocate() {
 	glBindRenderbuffer(GL_RENDERBUFFER, colorRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA32F, m_width, m_height);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, normalRBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA32F, m_width, m_height);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, depthRBO);
@@ -82,10 +91,7 @@ void PickBuffer::clear() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-SeamPadding::SeamPadding()
-	: m_maskShader("assets/shaders/uv_mask.glsl")
-	, m_dilateShader("assets/shaders/dilate.glsl")
-{
+SeamPadding::SeamPadding() : m_maskShader("assets/shaders/uv_mask.glsl") , m_dilateShader("assets/shaders/dilate.glsl") {
 	glGenVertexArrays(1, &m_emptyVAO);
 }
 
@@ -112,7 +118,7 @@ void SeamPadding::buildMask(PaintTarget& mask, const Mesh& mesh) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void SeamPadding::apply(const PaintTarget& canvas, const PaintTarget& mask, PaintTarget& display) {
+void SeamPadding::apply(const PaintTarget& canvas, const PaintTarget& strokeBuffer, const PaintTarget& mask, PaintTarget& display, const Vector4<float>& strokeColor) {
 	glBindFramebuffer(GL_FRAMEBUFFER, display.FBO);
 	glViewport(0, 0, display.size(), display.size());
 
@@ -124,12 +130,16 @@ void SeamPadding::apply(const PaintTarget& canvas, const PaintTarget& mask, Pain
 	m_dilateShader.use();
 	m_dilateShader.setInt("canvas", 0);
 	m_dilateShader.setInt("mask", 1);
+	m_dilateShader.setInt("stroke", 2);
+	m_dilateShader.setVec4("strokeColor", strokeColor.x, strokeColor.y, strokeColor.z, strokeColor.w);
 	m_dilateShader.setInt("maxDistance", maxDistance);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, canvas.texture.TID);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, mask.texture.TID);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, strokeBuffer.texture.TID);
 
 	glBindVertexArray(m_emptyVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3);

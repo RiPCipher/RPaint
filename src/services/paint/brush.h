@@ -8,6 +8,11 @@
 class PaintTarget;
 struct RenderObject;
 
+struct BrushHit {
+	Vector3<float> position;
+	Vector3<float> normal;
+};
+
 class Brush {
 public:
 	float radius = 0.1f;
@@ -15,12 +20,18 @@ public:
 	Vector4<float> color{ 1.0f, 0.0f, 0.0f, 1.0f };
 
 	Brush();
+	~Brush();
 
 	Brush(const Brush&) = delete;
 	Brush& operator=(const Brush&) = delete;
 
-	void stampAll(PaintTarget& target, const RenderObject& obj, const std::vector<Vector3<float>>& centers);
+	void stampAll(PaintTarget& strokeBuffer, const RenderObject& obj, const std::vector<BrushHit>& hits);
+	void commit(PaintTarget& canvas, const PaintTarget& strokeBuffer);
+
+	Vector4<float> linearColor() const;
 
 private:
 	Shader m_shader;
+	Shader m_commitShader;
+	unsigned int m_emptyVAO = 0;
 };

@@ -3,18 +3,15 @@
 
 #include "material.h"
 #include "_defaults.h"
+#include "core/math/math.h"
 
 static void bindSlot(int unit, const Texture* tex, const Texture& fallback) {
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_2D, tex ? tex->TID : fallback.TID);
 }
 
-static float srgbToLinear(float c) {
-	return c <= 0.04045f ? c / 12.92f : std::pow((c + 0.055f) / 1.055f, 2.4f);
-}
-
 void Material::setBaseColorSRGB(float r, float g, float b, float a) {
-	baseColorFactor = { srgbToLinear(r), srgbToLinear(g), srgbToLinear(b), a };
+	baseColorFactor = { Color::srgbToLinear(r), Color::srgbToLinear(g), Color::srgbToLinear(b), a };
 }
 
 

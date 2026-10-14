@@ -15,16 +15,24 @@ void main() {
 #ifdef FRAGMENT_SHADER
 
 uniform sampler2D canvas;
+uniform sampler2D stroke;
 uniform sampler2D mask;
+uniform vec4 strokeColor;
 uniform int maxDistance;
 
 out vec4 FragColor;
+
+vec4 composite(ivec2 p) {
+	vec4  base     = texelFetch(canvas, p, 0);
+	float coverage = texelFetch(stroke, p, 0).r;
+	return vec4(mix(base.rgb, strokeColor.rgb, strokeColor.a * coverage), base.a);
+}
 
 void main() {
 	ivec2 p = ivec2(gl_FragCoord.xy);
 
 	if (texelFetch(mask, p, 0).r > 0.5) {
-		FragColor = texelFetch(canvas, p, 0);
+		FragColor = composite(p);
 		return;
 	}
 
@@ -34,14 +42,14 @@ void main() {
 				if (max(abs(x), abs(y)) != r) continue;
 				ivec2 q = p + ivec2(x, y);
 				if (texelFetch(mask, q, 0).r > 0.5) {
-					FragColor = texelFetch(canvas, q, 0);
+					FragColor = composite(q);
 					return;
 				}
 			}
 		}
 	}
 
-	FragColor = texelFetch(canvas, p, 0);
+	FragColor = composite(p);
 }
 
 #endif

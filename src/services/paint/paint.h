@@ -2,6 +2,7 @@
 
 #include "services/render/texture.h"
 #include "services/render/shader.h"
+#include "core/math/vector.h"
 
 class Mesh;
 
@@ -28,6 +29,7 @@ class PickBuffer {
 public:
 	unsigned int FBO = 0;
 	unsigned int colorRBO = 0;
+	unsigned int normalRBO = 0;
 	unsigned int depthRBO = 0;
 
 	PickBuffer(int width, int height);
@@ -60,7 +62,7 @@ public:
 	SeamPadding& operator=(const SeamPadding&) = delete;
 
 	void buildMask(PaintTarget& mask, const Mesh& mesh);
-	void apply(const PaintTarget& canvas, const PaintTarget& mask, PaintTarget& display);
+	void apply(const PaintTarget& canvas, const PaintTarget& strokeBuffer, const PaintTarget& mask, PaintTarget& display, const Vector4<float>& strokeColor);
 
 private:
 	Shader m_maskShader;
